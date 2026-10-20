@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#120d2b">
+<title>Our Little Universe — Museum Kenangan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--bg:#120d2b;--card:#1d1640;--card2:#261d52;--text:#fdf6ff;--muted:#bcb2e0;--pink:#ff8fc7;--peach:#ffc2a1;--lilac:#b9a2ff;--mint:#9ff3d6;--line:#ffffff22;--r:22px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;font-size:106%;scroll-padding-top:70px}
+body{margin:0;font-family:'Fredoka',ui-rounded,'Nunito',system-ui,sans-serif;color:var(--text);line-height:1.6;overflow-x:hidden;
+ background:radial-gradient(circle at 15% 0,#4a2a8a55,transparent 45%),radial-gradient(circle at 95% 30%,#ff8fc733,transparent 40%),radial-gradient(circle at 10% 80%,#6fd9ff1f,transparent 40%),var(--bg);background-attachment:fixed}
+img{max-width:100%}
+#stars{position:fixed;inset:0;pointer-events:none;z-index:-1}
+.wrap{width:min(1080px,100% - 32px);margin-inline:auto}
+.hidden{display:none!important}
+h1,h2,h3{margin:0;font-weight:600;overflow-wrap:anywhere}
+.muted{color:var(--muted)}
+.eyebrow{display:inline-block;background:#ff8fc71f;color:var(--pink);border-radius:999px;padding:4px 14px;font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+/* nav */
+.top{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:#120d2bf5;border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0}
+.brand{font-weight:700;font-size:1.05rem;white-space:nowrap}.brand b{color:var(--pink)}
+.links{display:flex;gap:6px;align-items:center}
+.links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:999px;font-size:.92rem}
+.links a:hover{background:#ffffff12;color:var(--text)}
+.btn{font:inherit;font-weight:500;border:1px solid var(--line);background:var(--card2);color:var(--text);padding:10px 18px;border-radius:999px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}.btn:disabled{opacity:.6}
+.btn.primary{background:linear-gradient(120deg,var(--lilac),var(--pink),var(--peach));color:#2a1240;border:0;font-weight:600}
+.btn.sm{padding:7px 14px;font-size:.88rem}.btn.danger{color:#ffc3d4;border-color:#ffc3d455;background:transparent}
+.banner{background:#ffc2a124;color:var(--peach);text-align:center;padding:8px 14px;font-size:.85rem}
+/* hero */
+.hero{text-align:center;padding:clamp(48px,12vw,120px) 0 clamp(40px,8vw,80px);position:relative}
+.float{position:absolute;opacity:.9;animation:fl 6s ease-in-out infinite;pointer-events:none}
+.f1{left:6%;top:14%}.f2{right:8%;top:22%;animation-delay:-2s}.f3{left:14%;bottom:12%;animation-delay:-4s}.f4{right:12%;bottom:8%;animation-delay:-1s}
+@keyframes fl{50%{transform:translateY(-14px) rotate(8deg)}}
+.hero h1{font-size:clamp(2.6rem,10vw,5.8rem);line-height:1.1;margin:18px 0 14px;background:linear-gradient(120deg,#fff,var(--pink) 45%,var(--lilac));-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.08em}
+.hero h1 .amp{display:block;font-size:.5em;color:var(--peach);-webkit-text-fill-color:var(--peach)}
+.hero p{max-width:540px;margin:0 auto 26px;color:var(--muted);font-size:1.05rem}
+/* sections */
+.section{padding:clamp(36px,7vw,72px) 0}
+.head{margin-bottom:24px}.head h2{font-size:clamp(1.7rem,5vw,2.6rem);margin:10px 0 4px}
+.center{text-align:center}
+.countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:640px;margin:26px auto 14px}
+.tb{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 6px}
+.tb:nth-child(1) strong{color:var(--pink)}.tb:nth-child(2) strong{color:var(--peach)}.tb:nth-child(3) strong{color:var(--mint)}.tb:nth-child(4) strong{color:var(--lilac)}
+.tb strong{display:block;font-variant-numeric:tabular-nums;min-height:1.2em;font-size:clamp(1.6rem,6vw,2.6rem);line-height:1.2;font-weight:600}
+.tb span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+/* gallery */
+.gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.memory{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px;transition:transform .25s;display:flex;flex-direction:column;min-width:0}
+@media(hover:hover){.memory:hover{transform:translateY(-4px)}}
+.memory img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;border-radius:14px;background:var(--card2)}
+.memory .info{padding:12px 6px 6px;flex:1;display:flex;flex-direction:column;align-items:flex-start}.memory .info p{flex:1}
+.memory time{font-size:.8rem;color:var(--pink);font-weight:500}
+.memory h3{font-size:1.1rem;margin:2px 0}.memory p{margin:6px 0 10px;color:var(--muted);font-size:.93rem;white-space:pre-wrap;overflow-wrap:anywhere}
+.empty{grid-column:1/-1;padding:32px 18px;border:2px dashed var(--line);border-radius:var(--r);text-align:center;color:var(--muted)}
+/* timeline */
+.timeline{position:relative;max-width:720px;margin:0 auto;padding-left:34px}
+.timeline:before{content:"";position:absolute;left:11px;top:6px;bottom:6px;width:3px;border-radius:3px;background:linear-gradient(var(--pink),var(--lilac),transparent)}
+.timeline .empty{margin-left:-34px}.timeline:has(.empty):before{display:none}
+.event{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px;margin-bottom:16px}
+.event:before{content:"";position:absolute;left:-33px;top:10px;width:26px;height:26px;border-radius:50%;background:#120d2b url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ffe9b0'/%3E%3Cstop offset='.5' stop-color='%23ff8fc7'/%3E%3Cstop offset='1' stop-color='%23b9a2ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath fill='url(%23g)' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54z'/%3E%3C/svg%3E") center/16px no-repeat;border:1.5px solid #ff8fc788;box-shadow:0 0 12px #ff8fc755}
+.event time{color:var(--pink);font-size:.82rem;font-weight:500}.event h3{font-size:1.05rem}.event p{margin:4px 0 0;color:var(--muted);font-size:.93rem;overflow-wrap:anywhere}
+/* panels & forms */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:clamp(16px,4vw,26px);margin-bottom:18px}
+.panel h3{margin-bottom:6px}
+.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:4px 14px}.formgrid .full{grid-column:1/-1}
+label{display:block;color:var(--muted);font-size:.88rem;margin:12px 0 6px}
+input,textarea{width:100%;font:inherit;font-size:1rem;background:#120d2b;color:var(--text);border:1px solid var(--line);border-radius:14px;padding:11px 14px}
+input:focus,textarea:focus{outline:2px solid var(--lilac);outline-offset:1px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.notice{font-size:.84rem;color:var(--muted);margin:12px 0 0}
+dialog{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:26px;padding:24px;width:min(380px,calc(100% - 32px))}dialog::backdrop{background:#000b;backdrop-filter:blur(4px)}
+#loginMsg{min-height:1.2em;color:var(--pink);font-size:.88rem;margin:10px 0 0}
+footer{text-align:center;color:var(--muted);font-size:.9rem;padding:34px 16px 40px;border-top:1px solid var(--line)}.heart{color:var(--pink)}
+.ic{width:1.15em;height:1.15em;vertical-align:-.2em;filter:drop-shadow(0 0 5px #ff8fc766)}
+.btn .ic,.eyebrow .ic{filter:none}.btn.primary .ic{filter:brightness(0) opacity(.65)}
+.float{width:1.9rem;height:1.9rem;filter:drop-shadow(0 0 10px #ff8fc799)}
+.links a.active{background:#ffffff1a;color:var(--text)}
+#toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--card2);border:1px solid #ff8fc766;padding:10px 18px;border-radius:999px;z-index:60;max-width:90%;text-align:center;font-size:.92rem;opacity:0;pointer-events:none;transition:opacity .25s}#toast.show{opacity:1}
+.player{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:clamp(22px,5vw,48px);align-items:center;max-width:900px;margin:0 auto}
+.vinylwrap{position:relative;width:min(340px,100%);aspect-ratio:1;margin:0 auto}
+.disc{position:absolute;inset:3%;border-radius:50%;background:repeating-radial-gradient(circle at center,#0a0716 0 2px,#181230 2px 3px);box-shadow:0 18px 44px #000b,0 0 0 5px #ffffff12,0 0 40px #b9a2ff33;animation:spin 7s linear infinite;animation-play-state:paused}
+.disc.spin{animation-play-state:running}
+.disc:before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 20deg,#fff0,#ffffff26,#fff0 22%,#fff0 50%,#ffffff26 72%,#fff0)}
+.label{position:absolute;inset:29%;border-radius:50%;overflow:hidden;border:3px solid #ff8fc7bb;box-shadow:0 0 0 5px #0a0716,0 0 24px #ff8fc755;background:radial-gradient(circle at 35% 30%,#ffe9b0,#ff8fc7 55%,#b9a2ff)}
+.label img{width:100%;height:100%;object-fit:cover;display:block;visibility:hidden;transition:opacity .45s}
+.hole{position:absolute;left:50%;top:50%;width:5.5%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:#120d2b;box-shadow:inset 0 0 0 2px #ffffff40;z-index:2}
+.arm{position:absolute;right:8%;top:-2%;width:7px;height:56%;border-radius:6px;background:linear-gradient(#f1e9ff,#9a8fc4);transform-origin:50% 5px;transform:rotate(-14deg);transition:transform .9s ease;z-index:3;box-shadow:0 4px 10px #0008}
+.arm:before{content:"";position:absolute;left:50%;top:-10px;width:26px;height:26px;margin-left:-13px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#b9a2ff);box-shadow:0 2px 8px #0009}
+.arm:after{content:"";position:absolute;left:-5px;bottom:-12px;width:16px;height:22px;border-radius:4px;background:#ff8fc7}
+.vinylwrap.on .arm{transform:rotate(13deg)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.np h3{font-size:clamp(1.3rem,4vw,1.8rem);margin:2px 0}.np .muted{font-size:.9rem}
+#seek{width:100%;accent-color:var(--pink);margin:16px 0 0}.times{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.ctl{display:flex;gap:10px;align-items:center;margin:12px 0 18px}.ctl .btn{padding:11px 16px}.ctl .big{flex:1;max-width:200px}
+.tracks{display:grid;gap:8px}.trow{display:flex;gap:8px;align-items:stretch}
+.track{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;background:#ffffff0a;border:1px solid var(--line);border-radius:14px;padding:10px 14px;color:var(--text);font:inherit;cursor:pointer}
+.track.on{border-color:#ff8fc788;background:#ff8fc714}.track .tn{color:var(--pink);font-weight:600;min-width:1.2em}
+.track .tt{display:flex;flex-direction:column;min-width:0}.track b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.track small{color:var(--muted)}
+@media(max-width:760px){.player{grid-template-columns:1fr}.vinylwrap{width:min(300px,86%)}}
+.tabbar{display:none}
+@media(max-width:900px){.gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){
+ .links a{display:none}.links{gap:0}
+ body{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+ .tabbar{display:flex;position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:30;background:#1d1640ee;backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:999px;padding:6px;justify-content:space-around}
+ .tabbar a{flex:1;text-align:center;color:var(--muted);text-decoration:none;font-size:.7rem;padding:6px 2px;border-radius:999px;line-height:1.25}.tabbar a i{display:block;font-style:normal;font-size:1.3rem;opacity:.55;transition:.2s}
+ .tabbar a.active{color:var(--text);background:linear-gradient(120deg,#b9a2ff40,#ff8fc740);box-shadow:inset 0 0 0 1px #ff8fc766}
+ .tabbar a.active i{opacity:1;transform:translateY(-1px) scale(1.1)}
+ .tabbar a:active{background:#ffffff14;color:var(--text)}
+ .float{width:1.4rem;height:1.4rem}
+}
+@media(max-width:560px){
+ .gallery{grid-template-columns:1fr;gap:18px}.memory img{aspect-ratio:1/1}
+ .countdown{grid-template-columns:repeat(2,1fr);gap:10px}
+ .btn{padding:11px 18px}.actions .btn{flex:1 1 100%}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9b0"/><stop offset=".5" stop-color="#ff8fc7"/><stop offset="1" stop-color="#b9a2ff"/></linearGradient>
+<symbol id="i-heart" viewBox="0 0 24 24"><path fill="url(#gl)" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54z"/><path fill="#fff" fill-opacity=".45" d="M6.5 6.2c-1.3.5-2 1.8-1.8 3.1.1-1.5 1-2.5 2.4-2.9z"/></symbol>
+<symbol id="i-sparkle" viewBox="0 0 24 24"><path fill="url(#gl)" d="M12 2c.6 5.2 3.8 8.4 10 10-6.2 1.6-9.4 4.8-10 10-.6-5.2-3.8-8.4-10-10 6.2-1.6 9.4-4.8 10-10z"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path fill="url(#gl)" d="M12 2.5l2.9 6.2 6.8.8-5 4.7 1.3 6.7-6-3.4-6 3.4 1.3-6.7-5-4.7 6.8-.8z" stroke="url(#gl)" stroke-width="1" stroke-linejoin="round"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path fill="url(#gl)" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+<symbol id="i-home" viewBox="0 0 24 24"><path fill="url(#gl)" d="M12 3l9 8h-2.5v9h-5v-6h-3v6h-5v-9H3z" stroke="url(#gl)" stroke-width="1" stroke-linejoin="round"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><path fill="url(#gl)" fill-rule="evenodd" d="M9 4 7.5 6H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2.5L15 4zM12 9a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></symbol>
+<symbol id="i-path" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3.2" fill="url(#gl)"/><circle cx="18" cy="18" r="3.2" fill="url(#gl)"/><path d="M7.5 9c0 6 9 3.5 9 6" fill="none" stroke="url(#gl)" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="i-music" viewBox="0 0 24 24"><path fill="url(#gl)" d="M19 3v12.5a3.5 3.5 0 1 1-2-3.2V7.2L11 8.6v9.9a3.5 3.5 0 1 1-2-3.2V5z"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><path fill="url(#gl)" fill-rule="evenodd" d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></symbol>
+<symbol id="i-unlock" viewBox="0 0 24 24"><path fill="url(#gl)" d="M6 10h12a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><path d="M8 10V7.5a4 4 0 0 1 7.6-1.7" fill="none" stroke="url(#gl)" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><path fill="currentColor" d="M7 5h4v14H7zM13 5h4v14h-4z"/></symbol>
+<symbol id="i-prev" viewBox="0 0 24 24"><path fill="currentColor" d="M6 5h2v14H6zM20 5v14L9.5 12z"/></symbol>
+<symbol id="i-next" viewBox="0 0 24 24"><path fill="currentColor" d="M16 5h2v14h-2zM4 5l10.5 7L4 19z"/></symbol>
+</defs></svg>
+<canvas id="stars"></canvas>
+<div id="banner" class="banner hidden"></div>
+<header class="top"><div class="wrap">
+ <div class="brand"><svg class="ic " aria-hidden="true"><use href="#i-sparkle"/></svg> Our <b>Universe</b></div>
+ <div class="links"><a href="#countdown">Anniversary</a><a href="#gallery">Galeri</a><a href="#timeline">Timeline</a><a href="#lagu">Lagu</a><button class="btn sm" id="authBtn" type="button"><svg class="ic " aria-hidden="true"><use href="#i-lock"/></svg> Masuk</button></div>
+</div></header>
+<main>
+<section class="wrap hero" id="home">
+ <span class="float f1"><svg class="ic " aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="float f2"><svg class="ic " aria-hidden="true"><use href="#i-heart"/></svg></span><span class="float f3"><svg class="ic " aria-hidden="true"><use href="#i-moon"/></svg></span><span class="float f4"><svg class="ic " aria-hidden="true"><use href="#i-star"/></svg></span>
+ <span class="eyebrow">a little museum of us</span>
+ <h1 id="heroTitle">Our Little<br>Universe</h1>
+ <p id="heroSubtitle">Di antara miliaran bintang, semesta pernah mempertemukan kita. Di sini, hal-hal kecil tentang kita akan selalu punya tempat.</p>
+ <a class="btn primary" href="#gallery"><svg class="ic " aria-hidden="true"><use href="#i-sparkle"/></svg> Jelajahi kenangan</a>
+</section>
+
+<section class="wrap section center" id="countdown">
+ <span class="eyebrow">another year with you</span>
+ <h2 id="countTitle" style="font-size:clamp(1.6rem,5vw,2.4rem);margin-top:10px">Menuju hari spesial kita</h2>
+ <p class="muted" style="margin:4px 0 0">Setiap detik adalah bagian dari cerita kita.</p>
+ <div class="countdown">
+  <div class="tb"><strong id="days">—</strong><span>Hari</span></div><div class="tb"><strong id="hours">—</strong><span>Jam</span></div>
+  <div class="tb"><strong id="minutes">—</strong><span>Menit</span></div><div class="tb"><strong id="seconds">—</strong><span>Detik</span></div>
+ </div>
+ <div class="muted" id="sinceText">Tanggal jadian belum diatur.</div>
+</section>
+
+<section class="wrap section" id="gallery">
+ <div class="head"><span class="eyebrow">the memories we keep</span><h2>Galeri Kenangan</h2><p class="muted" style="margin:0">Setiap foto menyimpan cerita yang cuma kita tahu.</p></div>
+ <div id="galleryGrid" class="gallery"></div>
+</section>
+
+<section class="wrap section" id="timeline">
+ <div class="head"><span class="eyebrow">chapter by chapter</span><h2>Perjalanan Kita</h2><p class="muted" style="margin:0">Bab-bab kecil yang membentuk cerita kita.</p></div>
+ <div id="timelineList" class="timeline"></div>
+</section>
+
+<section class="wrap section" id="lagu">
+ <div class="head center"><span class="eyebrow"></span><h2>Our Song</h2><p class="muted" style="margin:0">Love Song</p></div>
+ <div class="player">
+  <div class="vinylwrap" id="vinylwrap"><div class="disc" id="disc"><div class="label"><img id="discPhoto" alt=""></div></div><span class="hole"></span><div class="arm"></div></div>
+  <div class="pctl">
+   <div class="np"><span class="muted" id="npState">let's play it</span><h3 id="npTitle">Belum ada lagu</h3><div class="muted" id="npArtist"></div></div>
+   <input id="seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="Posisi lagu"><div class="times"><span id="tCur">0:00</span><span id="tDur">0:00</span></div>
+   <div class="ctl"><button class="btn" id="prevBtn" type="button" aria-label="Lagu sebelumnya"><svg class="ic" aria-hidden="true"><use href="#i-prev"/></svg></button><button class="btn primary big" id="playBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg> Putar</button><button class="btn" id="nextBtn" type="button" aria-label="Lagu berikutnya"><svg class="ic" aria-hidden="true"><use href="#i-next"/></svg></button></div>
+   <div id="trackList" class="tracks"></div>
+  </div>
+ </div>
+ <audio id="audioPlayer" preload="metadata"></audio>
+</section>
+
+<section class="wrap section editor-only hidden" id="manage">
+ <div class="head"><span class="eyebrow">make it yours</span><h2>Kelola Museum</h2><p class="muted" style="margin:0">Hanya terlihat oleh kalian berdua.</p></div>
+ <div class="panel"><h3>Tambah kenangan</h3>
+  <form id="memoryForm"><div class="formgrid">
+   <div><label for="memoryTitle">Judul kenangan</label><input id="memoryTitle" required placeholder="Contoh: Hari pertama kita jalan"></div>
+   <div><label for="memoryDate">Tanggal</label><input id="memoryDate" type="date" required></div>
+   <div class="full"><label for="memoryStory">Ceritanya</label><textarea id="memoryStory" rows="3" placeholder="Tulis cerita kecil di balik foto ini..."></textarea></div>
+   <div class="full"><label for="memoryImage">Pilih foto</label><input id="memoryImage" type="file" accept="image/*" required></div>
+  </div><div class="actions"><button class="btn primary" type="submit">Simpan kenangan</button></div></form>
+  <p class="notice">Foto dikecilkan otomatis lalu disimpan online, jadi semua pengunjung bisa melihatnya.</p></div>
+ <div class="panel"><h3>Tambah lagu</h3>
+  <form id="songForm"><div class="formgrid">
+   <div><label for="songTitle">Judul lagu</label><input id="songTitle" required placeholder="Contoh: Lagu kita"></div>
+   <div><label for="songArtist">Penyanyi (opsional)</label><input id="songArtist"></div>
+   <div class="full"><label for="songFile">File lagu (mp3, m4a, dll. maksimal 20 MB)</label><input id="songFile" type="file" accept="audio/*" required></div>
+  </div><div class="actions"><button class="btn primary" type="submit">Unggah lagu</button></div></form>
+  <p class="notice">Lagu disimpan online, jadi semua pengunjung bisa memutarnya tanpa menambahkan lagi. Pastikan kalian berhak memakai lagunya.</p></div>
+ <div class="panel"><h3>Pengaturan cerita kita</h3>
+  <div class="formgrid">
+   <div><label for="nameOne">Nama kamu</label><input id="nameOne"></div><div><label for="nameTwo">Nama pasangan</label><input id="nameTwo"></div>
+   <div><label for="anniversary">Tanggal jadian</label><input id="anniversary" type="date"></div><div><label for="annivTime">Jam hitung mundur</label><input id="annivTime" type="time" value="00:00"></div>
+   <div class="full"><label for="introText">Kalimat pembuka</label><textarea id="introText" rows="2"></textarea></div>
+  </div>
+  <div class="actions"><button class="btn primary" id="saveSettings" type="button">Simpan pengaturan</button><button class="btn" id="exportData" type="button">Ekspor cadangan</button><button class="btn" id="importButton" type="button">Impor cadangan</button><input class="hidden" id="importFile" type="file" accept="application/json"></div>
+  <p class="notice">Impor menambahkan semua kenangan di file ke museum dan menimpa pengaturan. Bisa dipakai memindahkan data lama (versi browser) ke online.</p></div>
+</section>
+</main>
+<footer>Dibuat dengan <svg class="ic " aria-hidden="true"><use href="#i-heart"/></svg> untuk cerita yang berarti.<br><span id="footerNames">Our Little Universe</span></footer>
+<nav class="tabbar"><a href="#home"><i><svg class="ic " aria-hidden="true"><use href="#i-home"/></svg></i>Beranda</a><a href="#countdown"><i><svg class="ic " aria-hidden="true"><use href="#i-heart"/></svg></i>Anniv</a><a href="#gallery"><i><svg class="ic " aria-hidden="true"><use href="#i-camera"/></svg></i>Galeri</a><a href="#timeline"><i><svg class="ic " aria-hidden="true"><use href="#i-path"/></svg></i>Timeline</a><a href="#lagu"><i><svg class="ic " aria-hidden="true"><use href="#i-music"/></svg></i>Lagu</a></nav>
+<div id="toast" role="status"></div>
+<dialog id="loginDialog"><form id="loginForm"><h3>Masuk</h3><p class="muted" style="margin:0 0 6px;font-size:.9rem">Khusus untuk kita berdua <svg class="ic " aria-hidden="true"><use href="#i-heart"/></svg></p>
+<label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="username" required>
+<label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required>
+<p id="loginMsg"></p><div class="actions"><button class="btn primary" type="submit">Masuk</button><button class="btn" type="button" id="loginCancel">Batal</button></div></form></dialog>
+<script>
+const $=id=>document.getElementById(id);
+const IC=n=>`<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const SUPABASE_URL='PASTE_PROJECT_URL_DI_SINI';
+const SUPABASE_ANON_KEY='PASTE_ANON_PUBLIC_KEY_DI_SINI';
+const BUCKET='memory-photos',SONG_BUCKET='music';
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
+const sb=(!SUPABASE_URL.startsWith('PASTE')&&window.supabase)?window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
+const DEF={nameOne:'Bimo',nameTwo:'Carissa'};
+let state={settings:{nameOne:DEF.nameOne,nameTwo:DEF.nameTwo,anniversary:'',annivTime:'00:00',introText:''},memories:[],songs:[]};
+let isEditor=false,session=null,audioUrl=null;
+const pubUrl=p=>sb.storage.from(BUCKET).getPublicUrl(p).data.publicUrl;
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),3500)}
+function banner(t){$('banner').textContent=t;$('banner').classList.toggle('hidden',!t)}
+function escapeHtml(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function formatDate(s){if(!s)return 'Tanggal belum diatur';return new Intl.DateTimeFormat('id-ID',{day:'numeric',month:'long',year:'numeric'}).format(new Date(s+'T12:00:00'))}
+function renderSettings(){
+ const s=state.settings,names=[s.nameOne,s.nameTwo].filter(Boolean);
+ $('nameOne').value=s.nameOne||'';$('nameTwo').value=s.nameTwo||'';$('anniversary').value=s.anniversary||'';$('annivTime').value=s.annivTime||'00:00';$('introText').value=s.introText||'';
+ $('heroTitle').innerHTML=names.length?`${escapeHtml(names[0])}<span class="amp">&amp;</span>${escapeHtml(names[1]||'Our Universe')}`:'Our Little<br>Universe';
+ $('heroSubtitle').textContent=s.introText||'Di antara miliaran bintang, semesta pernah mempertemukan kita. Di sini, hal-hal kecil tentang kita akan selalu punya tempat.';
+ $('footerNames').textContent=names.length?names.join(' ✦ '):'Our Little Universe';
+ $('countTitle').textContent=names.length?`Menuju anniversary ${names.join(' & ')}`:'Menuju hari spesial kita';
+}
+function renderMemories(){
+ const grid=$('galleryGrid'),tl=$('timelineList');
+ const sorted=[...state.memories].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+ if(!sorted.length){grid.innerHTML='<div class="empty">Belum ada foto di museum ini.'+(isEditor?' Tambahkan kenangan pertama kalian di bawah':' Nantikan kenangan pertama kami')+'</div>';tl.innerHTML='<div class="empty">Timeline akan muncul setelah ada kenangan.</div>';return}
+ grid.innerHTML=sorted.map(m=>`<article class="memory"><img src="${escapeHtml(m.image)}" alt="${escapeHtml(m.title)}" loading="lazy"><div class="info"><time>${escapeHtml(formatDate(m.date))}</time><h3>${escapeHtml(m.title)}</h3><p>${escapeHtml(m.story||'Sebuah kenangan untuk disimpan selamanya.')}</p>${isEditor?`<button class="btn danger sm" data-delete="${escapeHtml(m.id)}" type="button">Hapus</button>`:''}</div></article>`).join('');
+ tl.innerHTML=[...sorted].reverse().map(m=>`<article class="event"><time>${escapeHtml(formatDate(m.date))}</time><h3>${escapeHtml(m.title)}</h3><p>${escapeHtml(m.story||'Satu lagi halaman indah dalam cerita kita.')}</p></article>`).join('');
+}
+function updateCountdown(){
+ const s=state.settings;
+ if(!s.anniversary){['days','hours','minutes','seconds'].forEach(id=>$(id).textContent='—');$('sinceText').textContent='Tanggal jadian belum diatur.';return}
+ const start=new Date(s.anniversary+'T'+(s.annivTime||'00:00')+':00');if(Number.isNaN(start.getTime()))return;
+ const now=new Date();let next=new Date(now.getFullYear(),start.getMonth(),start.getDate(),start.getHours(),start.getMinutes(),0);
+ if(next<=now)next.setFullYear(next.getFullYear()+1);
+ let d=Math.max(0,next-now);const days=Math.floor(d/864e5);d%=864e5;const h=Math.floor(d/36e5);d%=36e5;
+ $('days').textContent=days;$('hours').textContent=h;$('minutes').textContent=Math.floor(d/6e4);$('seconds').textContent=Math.floor(d%6e4/1e3);
+ let years=now.getFullYear()-start.getFullYear();if(new Date(now.getFullYear(),start.getMonth(),start.getDate(),start.getHours(),start.getMinutes())>now)years--;
+ $('sinceText').textContent=`Tanggal jadian: ${formatDate(s.anniversary)}${years>0?` · ${years} tahun bersama`:''}`;
+}
+function renderAll(){renderSettings();renderMemories();renderSongs();ensureDiscPhoto();updateCountdown()}
+async function loadRemote(){
+ if(!sb){banner('Website belum terhubung ke database (isi SUPABASE_URL dan SUPABASE_ANON_KEY).');renderAll();return}
+ const [s,m]=await Promise.all([sb.from('museum_settings').select('*').eq('id',1).maybeSingle(),sb.from('memories').select('*').order('memory_date',{ascending:false})]);
+ const sg=await sb.from('songs').select('*').order('created_at',{ascending:true});
+ state.songs=sg.error?[]:(sg.data||[]).map(r=>({id:r.id,title:r.title,artist:r.artist||'',path:r.audio_path,url:sb.storage.from(SONG_BUCKET).getPublicUrl(r.audio_path).data.publicUrl}));
+ if(sg.error)console.warn('songs:',sg.error.message);
+ if(s.error||m.error){banner('Gagal memuat data museum. Coba muat ulang halaman.');console.warn(s.error,m.error)}else banner('');
+ if(s.data)state.settings={nameOne:s.data.name_one||DEF.nameOne,nameTwo:s.data.name_two||DEF.nameTwo,anniversary:s.data.anniversary||'',annivTime:s.data.anniv_time||'00:00',introText:s.data.intro_text||''};
+ state.memories=(m.data||[]).map(r=>({id:r.id,title:r.title,date:r.memory_date,story:r.story||'',path:r.image_path,image:pubUrl(r.image_path)}));
+ renderAll();
+}
+// Auth (UI saja; izin sebenarnya ditegakkan oleh RLS di Supabase)
+async function refreshAuth(){
+ if(!sb)return;
+ session=(await sb.auth.getSession()).data.session;isEditor=false;
+ if(session){const r=await sb.rpc('is_editor');isEditor=!r.error&&r.data===true;
+  if(!isEditor){await sb.auth.signOut();session=null;toast('Akun ini tidak punya izin untuk mengedit.')}}
+ document.querySelectorAll('.editor-only').forEach(el=>el.classList.toggle('hidden',!isEditor));
+ $('authBtn').innerHTML=session?IC('unlock')+' Keluar':IC('lock')+' Masuk';renderMemories();renderSongs();
+}
+if(sb)sb.auth.onAuthStateChange(()=>setTimeout(refreshAuth,0));
+$('authBtn').addEventListener('click',async()=>{if(sb&&session){await sb.auth.signOut();return}$('loginMsg').textContent='';$('loginDialog').showModal()});
+$('loginCancel').addEventListener('click',()=>$('loginDialog').close());
+$('loginForm').addEventListener('submit',async e=>{e.preventDefault();if(!sb){$('loginMsg').textContent='Database belum terhubung. Isi SUPABASE_URL dan SUPABASE_ANON_KEY di index.html.';return}$('loginMsg').textContent='Masuk…';
+ const {error}=await sb.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});
+ if(error){$('loginMsg').textContent='Email atau password salah.';return}
+ $('loginPassword').value='';$('loginDialog').close()});
+// Data
+function compressImage(file,max=1600){return new Promise((res,rej)=>{const img=new Image(),url=URL.createObjectURL(file);
+ img.onload=()=>{URL.revokeObjectURL(url);const k=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);c.toBlob(b=>b?res(b):rej(new Error('x')),'image/jpeg',.86)};
+ img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('x'))};img.src=url})}
+async function addMemory(blob,m){
+ const ext=(blob.type.split('/')[1]||'jpeg').replace('jpeg','jpg'),path=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2))+'.'+ext;
+ const up=await sb.storage.from(BUCKET).upload(path,blob,{contentType:blob.type||'image/jpeg',cacheControl:'31536000'});if(up.error)throw up.error;
+ const ins=await sb.from('memories').insert({title:m.title,memory_date:m.date,story:m.story||'',image_path:path}).select();
+ if(ins.error||!ins.data.length){await sb.storage.from(BUCKET).remove([path]);throw ins.error||new Error('ditolak')}
+}
+async function saveSettingsRemote(s){
+ const r=await sb.from('museum_settings').update({name_one:s.nameOne||'',name_two:s.nameTwo||'',anniversary:s.anniversary||null,anniv_time:s.annivTime||'00:00',intro_text:s.introText||'',updated_at:new Date().toISOString()}).eq('id',1).select();
+ if(r.error||!r.data.length)throw r.error||new Error('ditolak');state.settings={...s};
+}
+$('memoryForm').addEventListener('submit',async e=>{
+ e.preventDefault();const file=$('memoryImage').files[0];if(!file||!isEditor)return;
+ if(!file.type.startsWith('image/')){toast('Pilih file gambar.');return}
+ const btn=e.submitter||e.target.querySelector('button');btn.disabled=true;
+ try{await addMemory(await compressImage(file),{title:$('memoryTitle').value.trim(),date:$('memoryDate').value,story:$('memoryStory').value.trim()});$('memoryForm').reset();await loadRemote();toast('Kenangan berhasil disimpan.')}
+ catch(err){console.warn(err);toast('Gagal menyimpan. Pastikan kamu masih masuk dan fotonya valid.')}
+ btn.disabled=false;
+});
+$('galleryGrid').addEventListener('click',async e=>{const b=e.target.closest('[data-delete]');if(!b||!isEditor)return;
+ if(!confirm('Hapus kenangan ini untuk semua orang?'))return;
+ const mem=state.memories.find(m=>m.id===b.dataset.delete);
+ const r=await sb.from('memories').delete().eq('id',b.dataset.delete).select();
+ if(r.error||!r.data.length){toast('Gagal menghapus.');return}
+ if(mem)await sb.storage.from(BUCKET).remove([mem.path]);await loadRemote()});
+$('saveSettings').addEventListener('click',async()=>{if(!isEditor)return;
+ try{await saveSettingsRemote({nameOne:$('nameOne').value.trim(),nameTwo:$('nameTwo').value.trim(),anniversary:$('anniversary').value,annivTime:$('annivTime').value||'00:00',introText:$('introText').value.trim()});renderSettings();updateCountdown();toast('Pengaturan tersimpan.')}
+ catch(err){console.warn(err);toast('Gagal menyimpan pengaturan.')}});
+$('exportData').addEventListener('click',()=>{const out={settings:state.settings,memories:state.memories.map(({id,title,date,story,image})=>({id,title,date,story,image}))};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(out,null,2)],{type:'application/json'}));a.download='our-little-universe-backup.json';a.click();URL.revokeObjectURL(a.href)});
+$('importButton').addEventListener('click',()=>$('importFile').click());
+$('importFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f||!isEditor)return;const r=new FileReader();
+ r.onload=async()=>{let d;try{d=JSON.parse(r.result);if(!d||!Array.isArray(d.memories)||!d.settings)throw 0}catch(_){toast('File cadangan tidak valid.');e.target.value='';return}
+  if(confirm(`Tambahkan ${d.memories.length} kenangan dan timpa pengaturan? Ini terlihat oleh semua pengunjung.`)){
+   let ok=0;try{await saveSettingsRemote(d.settings);for(const m of d.memories){await addMemory(await (await fetch(m.image)).blob(),m);ok++}toast('Cadangan berhasil diimpor.')}catch(err){console.warn(err);toast(`Impor berhenti setelah ${ok} kenangan berhasil.`)}
+   await loadRemote()}
+  e.target.value=''};r.readAsText(f)});
+// Musik (lagu tersimpan online, bisa diputar siapa saja)
+const audio=$('audioPlayer');let curId=null,photoIdx=0,photoTimer=null;
+const fmt=t=>isFinite(t)?Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0'):'0:00';
+const curIdx=()=>state.songs.findIndex(x=>x.id===curId);
+function setNP(){const x=state.songs[curIdx()];$('npTitle').textContent=x?x.title:(state.songs.length?'Pilih lagu':'Belum ada lagu');$('npArtist').textContent=x?x.artist:''}
+function renderSongs(){
+ const L=$('trackList');
+ if(curId&&curIdx()<0){audio.pause();audio.removeAttribute('src');audio.load();curId=null}
+ if(!state.songs.length){L.innerHTML='<div class="empty">Belum ada lagu.'+(isEditor?' Tambahkan lagu pertama di Kelola Museum.':' Nantikan lagu pertama kami.')+'</div>';setNP();return}
+ const ci=curIdx();
+ L.innerHTML=state.songs.map((x,i)=>`<div class="trow"><button class="track${i===ci?' on':''}" data-play="${i}" type="button"><span class="tn">${i+1}</span><span class="tt"><b>${escapeHtml(x.title)}</b>${x.artist?`<small>${escapeHtml(x.artist)}</small>`:''}</span></button>${isEditor?`<button class="btn danger sm" data-delsong="${escapeHtml(x.id)}" type="button">Hapus</button>`:''}</div>`).join('');
+ setNP();
+}
+function setDiscPhoto(first){
+ const L=state.memories.map(m=>m.image),img=$('discPhoto');
+ if(!L.length){img.removeAttribute('src');img.style.visibility='hidden';return}
+ img.style.visibility='visible';
+ if(first){photoIdx=0;img.style.opacity=1;img.src=L[0];return}
+ photoIdx=(photoIdx+1)%L.length;img.style.opacity=0;setTimeout(()=>{img.src=L[photoIdx];img.style.opacity=1},450)}
+function ensureDiscPhoto(){const img=$('discPhoto');if(state.memories.length&&!img.getAttribute('src'))setDiscPhoto(true);if(!state.memories.length)setDiscPhoto(true)}
+function setPlaying(on){
+ $('disc').classList.toggle('spin',on);$('vinylwrap').classList.toggle('on',on);
+ $('playBtn').innerHTML=on?IC('pause')+' Jeda':IC('play')+' Putar';
+ $('npState').textContent=on?'Sedang diputar':(curId?'Dijeda':'Siap diputar');
+ clearInterval(photoTimer);photoTimer=on?setInterval(()=>setDiscPhoto(false),6000):null}
+function loadTrack(i,play){
+ const x=state.songs[i];if(!x)return;curId=x.id;audio.src=x.url;setNP();
+ document.querySelectorAll('.track').forEach((b,j)=>b.classList.toggle('on',j===i));
+ if(play)audio.play().catch(()=>toast('Lagu tidak bisa diputar. Coba tekan lagi.'))}
+function step(d){const n=state.songs.length;if(!n)return;const i=curIdx();loadTrack(i<0?0:(i+d+n)%n,true)}
+$('playBtn').addEventListener('click',()=>{
+ if(!state.songs.length){toast('Belum ada lagu.');return}
+ if(curIdx()<0){loadTrack(0,true);return}
+ audio.paused?audio.play().catch(()=>toast('Lagu tidak bisa diputar.')):audio.pause()});
+$('nextBtn').addEventListener('click',()=>step(1));
+$('prevBtn').addEventListener('click',()=>{if(audio.currentTime>3)audio.currentTime=0;else step(-1)});
+$('trackList').addEventListener('click',async e=>{
+ const pl=e.target.closest('[data-play]');
+ if(pl){const i=+pl.dataset.play;if(i===curIdx()){audio.paused?audio.play():audio.pause()}else loadTrack(i,true);return}
+ const del=e.target.closest('[data-delsong]');if(!del||!isEditor)return;
+ if(!confirm('Hapus lagu ini untuk semua orang?'))return;
+ const x=state.songs.find(v=>v.id===del.dataset.delsong);
+ const r=await sb.from('songs').delete().eq('id',del.dataset.delsong).select();
+ if(r.error||!r.data.length){toast('Gagal menghapus lagu.');return}
+ if(x)await sb.storage.from(SONG_BUCKET).remove([x.path]);await loadRemote()});
+audio.addEventListener('play',()=>setPlaying(true));
+audio.addEventListener('pause',()=>setPlaying(false));
+audio.addEventListener('ended',()=>step(1));
+audio.addEventListener('loadedmetadata',()=>{$('tDur').textContent=fmt(audio.duration)});
+audio.addEventListener('timeupdate',()=>{$('tCur').textContent=fmt(audio.currentTime);if(isFinite(audio.duration)&&audio.duration>0)$('seek').value=audio.currentTime/audio.duration*100});
+audio.addEventListener('error',()=>{if(audio.getAttribute('src'))toast('Lagu gagal dimuat.')});
+$('seek').addEventListener('input',()=>{if(isFinite(audio.duration))audio.currentTime=$('seek').value/100*audio.duration});
+$('songForm').addEventListener('submit',async e=>{
+ e.preventDefault();const f=$('songFile').files[0];if(!f||!isEditor)return;
+ if(f.size>20*1024*1024){toast('File terlalu besar (maksimal 20 MB).');return}
+ const btn=e.submitter||e.target.querySelector('button');btn.disabled=true;toast('Mengunggah lagu… tunggu sebentar.');
+ const ext=((f.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,5))||'mp3',path=uid()+'.'+ext;
+ try{
+  const up=await sb.storage.from(SONG_BUCKET).upload(path,f,{contentType:f.type||'audio/mpeg',cacheControl:'31536000'});if(up.error)throw up.error;
+  const ins=await sb.from('songs').insert({title:$('songTitle').value.trim(),artist:$('songArtist').value.trim(),audio_path:path}).select();
+  if(ins.error||!ins.data.length){await sb.storage.from(SONG_BUCKET).remove([path]);throw ins.error||new Error('ditolak')}
+  $('songForm').reset();await loadRemote();toast('Lagu berhasil ditambahkan.')
+ }catch(err){console.warn(err);toast('Gagal mengunggah lagu. Pastikan SQL lagu sudah dijalankan dan kamu masih masuk.')}
+ btn.disabled=false});
+// Bintang
+const canvas=$('stars'),ctx=canvas.getContext('2d');let stars=[];
+function resize(){canvas.width=innerWidth*devicePixelRatio;canvas.height=innerHeight*devicePixelRatio;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);stars=Array.from({length:Math.min(110,Math.floor(innerWidth/8))},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.4+.3,a:Math.random(),v:Math.random()*.012+.003}))}
+function draw(){ctx.clearRect(0,0,innerWidth,innerHeight);for(const s of stars){s.a+=s.v;if(s.a>1||s.a<0)s.v*=-1;ctx.globalAlpha=Math.max(.12,Math.min(.85,s.a));ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;requestAnimationFrame(draw)}
+addEventListener('resize',resize);resize();draw();
+// Penanda bagian yang sedang dibuka (menu atas + tab bawah)
+const navLinks=[...document.querySelectorAll('.links a,.tabbar a')],spyIds=['home','countdown','gallery','timeline','lagu'];
+let lockUntil=0,spyTick=false;
+function setActive(id){navLinks.forEach(a=>{const on=a.getAttribute('href')==='#'+id;a.classList.toggle('active',on);on?a.setAttribute('aria-current','true'):a.removeAttribute('aria-current')})}
+function spy(){spyTick=false;if(Date.now()<lockUntil)return;
+ const line=Math.min(innerHeight*.4,320);let cur=spyIds[0];
+ for(const id of spyIds){const el=$(id);if(el&&el.getBoundingClientRect().top<=line)cur=id}
+ if(innerHeight+scrollY>=document.documentElement.scrollHeight-4)cur=spyIds[spyIds.length-1];
+ setActive(cur)}
+addEventListener('scroll',()=>{if(!spyTick){spyTick=true;requestAnimationFrame(spy)}},{passive:true});
+addEventListener('resize',spy);
+navLinks.forEach(a=>a.addEventListener('click',()=>{setActive(a.getAttribute('href').slice(1));lockUntil=Date.now()+900;setTimeout(spy,950)}));
+spy();
+setInterval(updateCountdown,1000);loadRemote().then(refreshAuth);
+</script>
+</body>
+</html>
